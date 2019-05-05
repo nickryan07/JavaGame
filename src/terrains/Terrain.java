@@ -16,8 +16,8 @@ public class Terrain {
 	
 	public Terrain(int x, int z, ModelLoader loader, ModelTexture texture) {
 		this.texture = texture;
-		this.x = x + SIZE;
-		this.z = z + SIZE;
+		this.x = x * SIZE;
+		this.z = z * SIZE;
 		this.mesh = generateTerrain(loader);
 	}
 	
