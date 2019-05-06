@@ -1,6 +1,7 @@
 package shaders;
 
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 import entity.Camera;
 import entity.Light;
@@ -18,6 +19,12 @@ public class TerrainShader extends Shader {
 	private int locationLightColor;
 	private int locationShineDamper;
 	private int locationReflectivity;
+	private int locationSkyColor;
+	private int locationBackgroundTexture;
+	private int locationrTexture;
+	private int locationgTexture;
+	private int locationbTexture;
+	private int locationBlendMap;
 
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -39,6 +46,24 @@ public class TerrainShader extends Shader {
 		locationLightColor = super.getUniformLocation("lightColor");
 		locationShineDamper = super.getUniformLocation("shineDamper");
 		locationReflectivity = super.getUniformLocation("reflectivity");
+		locationSkyColor = super.getUniformLocation("skyColor");
+		locationBackgroundTexture = super.getUniformLocation("textureSampler");
+		locationrTexture = super.getUniformLocation("rSampler");
+		locationgTexture = super.getUniformLocation("gSampler");
+		locationbTexture = super.getUniformLocation("bSampler");
+		locationBlendMap = super.getUniformLocation("blendMap");
+	}
+	
+	public void loadTextureUnits() {
+		super.loadInt(locationBackgroundTexture, 0);
+		super.loadInt(locationrTexture, 1);
+		super.loadInt(locationgTexture, 2);
+		super.loadInt(locationbTexture, 3);
+		super.loadInt(locationBlendMap, 4);
+	}
+	
+	public void loadSkyColor(float red, float green, float blue) {
+		super.loadVector(locationSkyColor, new Vector3f(red, green, blue));
 	}
 	
 	public void loadLight(Light light) {

@@ -18,7 +18,9 @@ import entity.Light;
 import models.RawModel;
 import models.TexturedModel;
 import terrains.Terrain;
+import textures.BlendedTerrainTexture;
 import textures.ModelTexture;
+import textures.TerrainTexture;
 
 public class Game {
 	
@@ -80,8 +82,15 @@ public class Game {
 		}
 		Light light = new Light(new Vector3f(10000, 10000, 1000), new Vector3f(1,1,1));
 		
-		Terrain terrain = new Terrain(0, -1,loader,new ModelTexture(loader.loadTexture("grass")));
-		Terrain terrain2 = new Terrain(-1,-1,loader,new ModelTexture(loader.loadTexture("grass")));
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("mud"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("flowers"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+		
+		BlendedTerrainTexture blendedTexture = new BlendedTerrainTexture(backgroundTexture, rTexture, gTexture, bTexture);
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("texmap2"));
+		Terrain terrain = new Terrain(0, -1,loader,blendedTexture, blendMap);
+		Terrain terrain2 = new Terrain(-1,-1,loader,blendedTexture, blendMap);
 		
 		Camera camera = new Camera();
 		

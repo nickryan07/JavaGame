@@ -23,6 +23,8 @@ public class MasterRender {
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000;
 	
+	private static final float RED = 0.5f, GREEN = 0.98f, BLUE = 0.99f;
+	
 	private Matrix4f projectionMatrix;
 	
 	private StaticShader shader = new StaticShader();
@@ -45,11 +47,13 @@ public class MasterRender {
 	public void render(Light light, Camera camera) {
 		init();
 		shader.start();
+		shader.loadSkyColor(RED, GREEN, BLUE);
 		shader.loadLight(light);
 		shader.loadViewMatrix(camera);
 		render.render(entities);
 		shader.stop();
 		terrainShader.start();
+		terrainShader.loadSkyColor(RED, GREEN, BLUE);
 		terrainShader.loadLight(light);
 		terrainShader.loadViewMatrix(camera);
 		renderTerrain.render(terrains);
@@ -61,7 +65,7 @@ public class MasterRender {
 	public void init() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glClearColor(0.5f, 0.98f, 0.99f, 1);
+		GL11.glClearColor(RED, GREEN, BLUE, 1);
 	}
 	
 	public static void enableCulling() {
