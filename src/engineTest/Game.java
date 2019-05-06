@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -21,36 +22,65 @@ import textures.ModelTexture;
 
 public class Game {
 	
-	/**
-	 * Main
-	 */
-	public static void main(String[] args) {
-		DisplayManager.createDisplay();
+	 /** time at last frame */
+    long lastFrame;
+     
+    /** frames per second */
+    int fps;
+    /** last fps time */
+    long lastFPS = getTime();
+ 
+    
+    /**
+     * Get the accurate system time
+     * 
+     * @return The system time in milliseconds
+     */
+    public long getTime() {
+        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    }
+    
+    /**
+     * Calculate the FPS and set it in the title bar
+     */
+    public void updateFPS() {
+        if (getTime() - lastFPS > 1000) {
+            Display.setTitle("Java Game - FPS: " + fps);
+            fps = 0;
+            lastFPS += 1000;
+        }
+        fps++;
+    }
+    
+    public void initialize() {
+    	DisplayManager.createDisplay();
 		
 		ModelLoader loader = new ModelLoader();
 		
 		
 		
-		RawModel model = ObjLoader.loadObjModel("Stall", loader);
-		ModelTexture texture = new ModelTexture(loader.loadTexture("stallTexture"));
+		RawModel model = ObjLoader.loadObjModel("Tree", loader);//Stall
+		ModelTexture texture = new ModelTexture(loader.loadTexture("Tree"));//StallTexture
 		TexturedModel texturedModel = new TexturedModel(model, texture);
 		//ModelTexture tex = texturedModel.getTexture();
 		texture.setShineDamper(20);
-		texture.setReflectivity(0.5f);
+		texture.setReflectivity(0.1f);
 		
-		Entity entity = new Entity(texturedModel, new Vector3f(0, 0, -30), 0, 180, 0, 1);
-//		RawModel model = ObjLoader.loadObjModel("stall", loader);
-//		
-//		TexturedModel staticModel = new TexturedModel(model,new ModelTexture(loader.loadTexture("stallTexture")));
-//		
-//		List<Entity> entities = new ArrayList<Entity>();
-//		Random random = new Random();
-//		for(int i=0;i<50;i++){
-//			entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,3));
-//		}
-		Light light = new Light(new Vector3f(0, 0, -20), new Vector3f(1,1,1));
+		Entity stall = new Entity(texturedModel, new Vector3f(0, 0, -30), 0, 180, 0, 2);
+		RawModel grassModel = ObjLoader.loadObjModel("grassModel", loader);//grassModel
 		
-		Terrain terrain = new Terrain(0, -1,loader,new ModelTexture(loader.loadTexture("10")));
+		TexturedModel grassStaticModel = new TexturedModel(grassModel,new ModelTexture(loader.loadTexture("grass2")));
+		grassStaticModel.getTexture().setHasAlpha(true);
+		grassStaticModel.getTexture().setFixLighting(true);
+		List<Entity> entities = new ArrayList<Entity>();
+		entities.add(stall);
+		Random random = new Random();
+		for(int i=0;i<500;i++){
+			entities.add(new Entity(grassStaticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,1));
+		}
+		Light light = new Light(new Vector3f(10000, 10000, 1000), new Vector3f(1,1,1));
+		
+		Terrain terrain = new Terrain(0, -1,loader,new ModelTexture(loader.loadTexture("grass")));
 		Terrain terrain2 = new Terrain(-1,-1,loader,new ModelTexture(loader.loadTexture("grass")));
 		
 		Camera camera = new Camera();
@@ -60,16 +90,25 @@ public class Game {
 			camera.move();
 			render.processTerrain(terrain);
 			render.processTerrain(terrain2);
-			//for(Entity entity:entities){
+			for(Entity entity:entities){
 				render.processEntity(entity);
-			//}
+			}
 			render.render(light, camera);
 			DisplayManager.updateDisplay();
+			updateFPS();
 		}
 		
 		render.unload();
 		loader.unload();
 		DisplayManager.closeDisplay();
+    }
+    
+	/**
+	 * Main
+	 */
+	public static void main(String[] args) {
+		Game game = new Game();
+		game.initialize();
 	}
 	
 

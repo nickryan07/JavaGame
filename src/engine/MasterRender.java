@@ -19,7 +19,7 @@ import terrains.Terrain;
 
 public class MasterRender {
 
-	private static final float FOV = 70;
+	private static final float FOV = 70; //70
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000;
 	
@@ -36,8 +36,7 @@ public class MasterRender {
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	
 	public MasterRender() {
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glCullFace(GL11.GL_BACK);
+		enableCulling();
 		createProjectionMatrix();
 		render = new RenderEntity(shader, projectionMatrix);
 		renderTerrain = new RenderTerrain(terrainShader, projectionMatrix);
@@ -62,7 +61,16 @@ public class MasterRender {
 	public void init() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glClearColor(0, 0.5f, 0, 1);
+		GL11.glClearColor(0.5f, 0.98f, 0.99f, 1);
+	}
+	
+	public static void enableCulling() {
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
+	}
+	
+	public static void disableCulling() {
+		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 	
 	public void processTerrain(Terrain terrain) {

@@ -7,11 +7,30 @@ public class ModelTexture {
 	private float shineDamper = 1;
 	private float reflectivity = 0;
 	
+	private boolean hasAlpha = false;
+	private boolean fixLighting = false;
+	
 	
 	public ModelTexture(int id) {
 		this.textureId = id;
 	}
 	
+	public boolean getFixLighting() {
+		return fixLighting;
+	}
+
+	public void setFixLighting(boolean fixLighting) {
+		this.fixLighting = fixLighting;
+	}
+	
+	public boolean getHasAlpha() {
+		return hasAlpha;
+	}
+
+	public void setHasAlpha(boolean hasAlpha) {
+		this.hasAlpha = hasAlpha;
+	}
+
 	public int getId() {
 		return this.textureId;
 	}

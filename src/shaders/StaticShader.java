@@ -18,6 +18,7 @@ public class StaticShader extends Shader {
 	private int locationLightColor;
 	private int locationShineDamper;
 	private int locationReflectivity;
+	private int locationFixLighting;
 
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -39,6 +40,11 @@ public class StaticShader extends Shader {
 		locationLightColor = super.getUniformLocation("lightColor");
 		locationShineDamper = super.getUniformLocation("shineDamper");
 		locationReflectivity = super.getUniformLocation("reflectivity");
+		locationFixLighting = super.getUniformLocation("fixLighting");
+	}
+	
+	public void loadFixLighting(boolean fixLighting) {
+		super.loadBoolean(locationFixLighting, fixLighting);
 	}
 	
 	public void loadLight(Light light) {
