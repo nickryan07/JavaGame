@@ -9,18 +9,18 @@ public class Camera {
 	private float pitch, yaw, roll;
 	
 	public void move() {
-		if(Keyboard.isKeyDown(Keyboard.KEY_W))
-			position.z -= 0.5f;
-		if(Keyboard.isKeyDown(Keyboard.KEY_D))
-			position.x += 0.35f;
-		if(Keyboard.isKeyDown(Keyboard.KEY_A))
-			position.x -= 0.35f;
-		if(Keyboard.isKeyDown(Keyboard.KEY_S))
-			position.z += 0.5f;
-		if(Keyboard.isKeyDown(Keyboard.KEY_Q))
-			position.y += 0.15f;
-		if(Keyboard.isKeyDown(Keyboard.KEY_E))
-			position.y -= 0.15f;
+//		if(Keyboard.isKeyDown(Keyboard.KEY_W))
+//			position.z -= 0.5f;
+//		if(Keyboard.isKeyDown(Keyboard.KEY_D))
+//			position.x += 0.35f;
+//		if(Keyboard.isKeyDown(Keyboard.KEY_A))
+//			position.x -= 0.35f;
+//		if(Keyboard.isKeyDown(Keyboard.KEY_S))
+//			position.z += 0.5f;
+//		if(Keyboard.isKeyDown(Keyboard.KEY_Q))
+//			position.y += 0.15f;
+//		if(Keyboard.isKeyDown(Keyboard.KEY_E))
+//			position.y -= 0.15f;
 	}
 	
 	public Vector3f getPosition() {

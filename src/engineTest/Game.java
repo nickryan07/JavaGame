@@ -15,6 +15,7 @@ import engine.ObjLoader;
 import entity.Camera;
 import entity.Entity;
 import entity.Light;
+import entity.Player;
 import models.RawModel;
 import models.TexturedModel;
 import terrains.Terrain;
@@ -61,21 +62,22 @@ public class Game {
 		
 		
 		
-		RawModel model = ObjLoader.loadObjModel("Tree", loader);//Stall
-		ModelTexture texture = new ModelTexture(loader.loadTexture("Tree"));//StallTexture
+		RawModel model = ObjLoader.loadObjModel("char2", loader);//Stall
+		ModelTexture texture = new ModelTexture(loader.loadTexture("Text"));//StallTexture
 		TexturedModel texturedModel = new TexturedModel(model, texture);
 		//ModelTexture tex = texturedModel.getTexture();
 		texture.setShineDamper(20);
 		texture.setReflectivity(0.1f);
 		
-		Entity stall = new Entity(texturedModel, new Vector3f(0, 0, -30), 0, 180, 0, 2);
+		Player player = new Player(texturedModel, new Vector3f(0, 0, -30), 0, 0, 0, 0.015f);
+		//Entity stall = new Entity(texturedModel, new Vector3f(0, 0, -30), 0, 0, 0, 0.015f);
 		RawModel grassModel = ObjLoader.loadObjModel("grassModel", loader);//grassModel
 		
 		TexturedModel grassStaticModel = new TexturedModel(grassModel,new ModelTexture(loader.loadTexture("grass2")));
 		grassStaticModel.getTexture().setHasAlpha(true);
 		grassStaticModel.getTexture().setFixLighting(true);
 		List<Entity> entities = new ArrayList<Entity>();
-		entities.add(stall);
+		entities.add(player);
 		Random random = new Random();
 		for(int i=0;i<500;i++){
 			entities.add(new Entity(grassStaticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,1));
@@ -94,9 +96,12 @@ public class Game {
 		
 		Camera camera = new Camera();
 		
+		
+		
 		MasterRender render = new MasterRender();
 		while(!Display.isCloseRequested()) {
 			camera.move();
+			player.move();
 			render.processTerrain(terrain);
 			render.processTerrain(terrain2);
 			for(Entity entity:entities){
