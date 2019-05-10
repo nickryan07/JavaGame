@@ -7,6 +7,8 @@ import java.util.Random;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.Music;
+import org.newdawn.slick.SlickException;
 
 import engine.DisplayManager;
 import engine.MasterRender;
@@ -55,7 +57,12 @@ public class Game {
         fps++;
     }
     
-    public void initialize() {
+    public void initialize() throws SlickException {
+    	Music openingMenuMusic;
+		openingMenuMusic = new Music("res/music.ogg");
+        //openingMenuMusic.loop();
+        openingMenuMusic.setVolume(0.08f);
+    	
     	DisplayManager.createDisplay();
 		
 		ModelLoader loader = new ModelLoader();
@@ -69,7 +76,7 @@ public class Game {
 		texture.setShineDamper(20);
 		texture.setReflectivity(0.1f);
 		
-		Player player = new Player(texturedModel, new Vector3f(0, 0, -30), 0, 0, 0, 0.015f);
+		Player player = new Player(texturedModel, new Vector3f(0, 0, -30), 0, 180, 0, 0.015f);
 		//Entity stall = new Entity(texturedModel, new Vector3f(0, 0, -30), 0, 0, 0, 0.015f);
 		RawModel grassModel = ObjLoader.loadObjModel("grassModel", loader);//grassModel
 		
@@ -94,14 +101,14 @@ public class Game {
 		Terrain terrain = new Terrain(0, -1,loader,blendedTexture, blendMap);
 		Terrain terrain2 = new Terrain(-1,-1,loader,blendedTexture, blendMap);
 		
-		Camera camera = new Camera();
+		Camera camera = new Camera(player); //null
 		
 		
 		
 		MasterRender render = new MasterRender();
 		while(!Display.isCloseRequested()) {
 			camera.move();
-			player.move();
+			player.move(camera);
 			render.processTerrain(terrain);
 			render.processTerrain(terrain2);
 			for(Entity entity:entities){
@@ -111,7 +118,8 @@ public class Game {
 			DisplayManager.updateDisplay();
 			updateFPS();
 		}
-		
+
+		openingMenuMusic.stop();
 		render.unload();
 		loader.unload();
 		DisplayManager.closeDisplay();
@@ -122,7 +130,13 @@ public class Game {
 	 */
 	public static void main(String[] args) {
 		Game game = new Game();
-		game.initialize();
+		try {
+			game.initialize();
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 

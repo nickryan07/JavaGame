@@ -1,12 +1,23 @@
 package entity;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
 
 	private Vector3f position = new Vector3f(0, 3, 0);
 	private float pitch, yaw, roll;
+	Player player = null;
+	
+	public Camera(Player player) {
+		if(player != null) {
+			Vector3f playerPosition = player.getPosition();
+			position = new Vector3f(playerPosition.getX(), playerPosition.getY()+3, playerPosition.getZ()); //+3, +4
+			this.yaw = player.getrY();
+			this.player = player;
+		}
+	}
 	
 	public void move() {
 //		if(Keyboard.isKeyDown(Keyboard.KEY_W))
@@ -23,9 +34,26 @@ public class Camera {
 //			position.y -= 0.15f;
 	}
 	
+	private float calculatePosition(float rY) {
+		//return GLU.gluLookAt(eyex, eyey, eyez, centerx, centery, centerz, upx, upy, upz);
+		return 0.0f;
+	}
+	
+	public void setPosition(float turn) {
+		if(player != null) {
+			Vector3f playerPosition = player.getPosition();
+			
+			position = new Vector3f(playerPosition.getX(), playerPosition.getY()+3, playerPosition.getZ());
+			//this.yaw = rX;
+			this.yaw = -player.getrY()-180;
+			//this.pitch = rZ;
+		}
+	}
+	
 	public Vector3f getPosition() {
 		return position;
 	}
+	
 	public float getPitch() {
 		return pitch;
 	}

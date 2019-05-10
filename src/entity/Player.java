@@ -24,7 +24,7 @@ public class Player extends Entity {
 		
 	}
 	
-	public void move() {
+	public void move(Camera camera) {
 		checkInputs();
 		super.increaseRotation(0, currentTurn * DisplayManager.getFrameTimeSeconds(), 0);
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
@@ -37,6 +37,7 @@ public class Player extends Entity {
 			currentJump = 0;
 			super.getPosition().y = TERRAIN_HEIGHT;
 		}
+		camera.setPosition(currentTurn * DisplayManager.getFrameTimeSeconds());
 	}
 	
 	private void jump() {
@@ -46,9 +47,17 @@ public class Player extends Entity {
 	
 	private void checkInputs() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			this.currentSpeed = RUN;
+			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+				this.currentSpeed = RUN*2;
+			} else {
+				this.currentSpeed = RUN;
+			}
 		} else if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			this.currentSpeed = -RUN;
+			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+				this.currentSpeed = -RUN*2;
+			} else {
+				this.currentSpeed =- RUN;
+			}
 		} else {
 			this.currentSpeed = 0;
 		}
