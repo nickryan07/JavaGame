@@ -1,7 +1,5 @@
 package entity;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Camera {
@@ -34,10 +32,6 @@ public class Camera {
 //			position.y -= 0.15f;
 	}
 	
-	private float calculatePosition(float rY) {
-		//return GLU.gluLookAt(eyex, eyey, eyez, centerx, centery, centerz, upx, upy, upz);
-		return 0.0f;
-	}
 	
 	public void setPosition(float turn) {
 		if(player != null) {

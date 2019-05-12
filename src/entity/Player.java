@@ -1,10 +1,13 @@
 package entity;
 
+import java.util.ArrayList;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.DisplayManager;
 import models.TexturedModel;
+import terrains.Terrain;
 
 public class Player extends Entity {
 	
@@ -12,8 +15,6 @@ public class Player extends Entity {
 	private static final float TURN = 160;
 	private static final float JUMP = 15;
 	private static final float GRAVITY = -60;
-	
-	private static final float TERRAIN_HEIGHT = 0;
 	
 	private float currentSpeed = 0;
 	private float currentTurn = 0;
@@ -24,7 +25,7 @@ public class Player extends Entity {
 		
 	}
 	
-	public void move(Camera camera) {
+	public void move(Camera camera, /*ArrayList<Terrain> terrains*/ Terrain terrain) {
 		checkInputs();
 		super.increaseRotation(0, currentTurn * DisplayManager.getFrameTimeSeconds(), 0);
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
@@ -33,9 +34,10 @@ public class Player extends Entity {
 		super.increasePosition(x_dist, 0, z_dist);
 		currentJump += GRAVITY * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(0, currentJump * DisplayManager.getFrameTimeSeconds(), 0);
-		if(super.getPosition().y<TERRAIN_HEIGHT) {
+		float terrainHeight = terrain.getTerrainHeight(super.getPosition().x, super.getPosition().z);
+		if(super.getPosition().y < terrainHeight) {
 			currentJump = 0;
-			super.getPosition().y = TERRAIN_HEIGHT;
+			super.getPosition().y = terrainHeight;
 		}
 		camera.setPosition(currentTurn * DisplayManager.getFrameTimeSeconds());
 	}

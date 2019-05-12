@@ -58,12 +58,18 @@ public class Game {
     }
     
     public void initialize() throws SlickException {
-    	Music openingMenuMusic;
-		openingMenuMusic = new Music("res/music.ogg");
-        //openingMenuMusic.loop();
-        openingMenuMusic.setVolume(0.08f);
     	
     	DisplayManager.createDisplay();
+
+    	
+    	Music openingMenuMusic;
+		openingMenuMusic = new Music("res/music.ogg");
+        openingMenuMusic.loop();
+        openingMenuMusic.setVolume(0.08f);
+        Music natureSounds;
+    	natureSounds = new Music("res/nature.wav");
+    	natureSounds.loop();
+    	natureSounds.setVolume(0.005f);
 		
 		ModelLoader loader = new ModelLoader();
 		
@@ -85,10 +91,7 @@ public class Game {
 		grassStaticModel.getTexture().setFixLighting(true);
 		List<Entity> entities = new ArrayList<Entity>();
 		entities.add(player);
-		Random random = new Random();
-		for(int i=0;i<500;i++){
-			entities.add(new Entity(grassStaticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,1));
-		}
+		
 		Light light = new Light(new Vector3f(10000, 10000, 1000), new Vector3f(1,1,1));
 		
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass"));
@@ -98,17 +101,24 @@ public class Game {
 		
 		BlendedTerrainTexture blendedTexture = new BlendedTerrainTexture(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("texmap2"));
-		Terrain terrain = new Terrain(0, -1,loader,blendedTexture, blendMap);
-		Terrain terrain2 = new Terrain(-1,-1,loader,blendedTexture, blendMap);
-		
+		Terrain terrain = new Terrain(0, -1,loader,blendedTexture, blendMap, "heightmap");
+		Terrain terrain2 = new Terrain(-1,-1,loader,blendedTexture, blendMap, "heightmap");
+		List<Terrain> terrains = new ArrayList<Terrain>();
+		terrains.add(terrain);
+		terrains.add(terrain2);
 		Camera camera = new Camera(player); //null
 		
-		
+		Random random = new Random();
+		for(int i = 0; i < 500; i++) {
+			float x = random.nextFloat()*800 - 400;
+			float z = random.nextFloat() * -600;
+			entities.add(new Entity(grassStaticModel, new Vector3f(x, terrain2.getTerrainHeight(x, z), z),0,0,0,1));
+		}
 		
 		MasterRender render = new MasterRender();
 		while(!Display.isCloseRequested()) {
 			camera.move();
-			player.move(camera);
+			player.move(camera, terrain2);
 			render.processTerrain(terrain);
 			render.processTerrain(terrain2);
 			for(Entity entity:entities){
