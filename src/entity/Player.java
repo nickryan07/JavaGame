@@ -1,13 +1,12 @@
 package entity;
 
-import java.util.ArrayList;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
 import engine.DisplayManager;
 import models.TexturedModel;
 import terrains.Terrain;
+import utils.Constants;
 
 public class Player extends Entity {
 	
@@ -39,7 +38,9 @@ public class Player extends Entity {
 			currentJump = 0;
 			super.getPosition().y = terrainHeight;
 		}
-		camera.setPosition(currentTurn * DisplayManager.getFrameTimeSeconds());
+		if(!Constants.THIRD_PERSON) {
+			camera.setPosition(currentTurn * DisplayManager.getFrameTimeSeconds());
+		}
 	}
 	
 	private void jump() {
