@@ -12,6 +12,7 @@ import org.newdawn.slick.SlickException;
 
 import engine.DisplayManager;
 import engine.MasterRender;
+import engine.ModelData;
 import engine.ModelLoader;
 import engine.ObjLoader;
 import entity.Camera;
@@ -75,7 +76,9 @@ public class Game {
 		
 		
 		
-		RawModel model = ObjLoader.loadObjModel("char2", loader);//Stall
+		ModelData charData = ObjLoader.loadObjModel("char2");
+		RawModel model = loader.loadInVAO(charData.getVertices(), charData.getTextureCoords(),
+				charData.getNormals(), charData.getIndices());//Stall
 		ModelTexture texture = new ModelTexture(loader.loadTexture("Text"));//StallTexture
 		TexturedModel texturedModel = new TexturedModel(model, texture);
 		//ModelTexture tex = texturedModel.getTexture();
@@ -84,15 +87,15 @@ public class Game {
 		
 		Player player = new Player(texturedModel, new Vector3f(0, 0, -30), 0, 180, 0, 0.015f);
 		//Entity stall = new Entity(texturedModel, new Vector3f(0, 0, -30), 0, 0, 0, 0.015f);
-		RawModel grassModel = ObjLoader.loadObjModel("grassModel", loader);//grassModel
 		
-		TexturedModel grassStaticModel = new TexturedModel(grassModel,new ModelTexture(loader.loadTexture("grass2")));
-		grassStaticModel.getTexture().setHasAlpha(true);
-		grassStaticModel.getTexture().setFixLighting(true);
+		
 		List<Entity> entities = new ArrayList<Entity>();
 		entities.add(player);
 		
-		Light light = new Light(new Vector3f(10000, 10000, 1000), new Vector3f(1,1,1));
+		List<Light> lights = new ArrayList<Light>();
+		lights.add(new Light(new Vector3f(10000, 10000, 1000), new Vector3f(0.4f,0.4f,0.4f)));
+		//lights.add(new Light(new Vector3f(-200, 40, -200), new Vector3f(100,0,0)));
+		//lights.add(new Light(new Vector3f(-100, 10, -100), new Vector3f(0,0,100)));
 		
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("mud"));
@@ -107,13 +110,27 @@ public class Game {
 		terrains.add(terrain);
 		terrains.add(terrain2);
 		Camera camera = new Camera(player); //null
+		ModelData grassData = ObjLoader.loadObjModel("grassModel");
+		RawModel grassModel = loader.loadInVAO(grassData.getVertices(), grassData.getTextureCoords(),
+				grassData.getNormals(), grassData.getIndices());//grassModel
 		
-		Random random = new Random();
+		TexturedModel grassStaticModel = new TexturedModel(grassModel,new ModelTexture(loader.loadTexture("grass2")));
+		grassStaticModel.getTexture().setHasAlpha(true);
+		grassStaticModel.getTexture().setFixLighting(true);Random random = new Random();
 		for(int i = 0; i < 500; i++) {
 			float x = random.nextFloat()*800 - 400;
 			float z = random.nextFloat() * -600;
 			entities.add(new Entity(grassStaticModel, new Vector3f(x, terrain2.getTerrainHeight(x, z), z),0,0,0,1));
 		}
+		ModelData lampData = ObjLoader.loadObjModel("lamp");
+		RawModel lampModel = loader.loadInVAO(lampData.getVertices(), lampData.getTextureCoords(),
+				lampData.getNormals(), lampData.getIndices());;//grassModel
+		
+		TexturedModel lampStaticModel = new TexturedModel(lampModel,new ModelTexture(loader.loadTexture("lamp")));
+		lampStaticModel.getTexture().setHasAlpha(true);
+		lampStaticModel.getTexture().setFixLighting(true);
+		entities.add(new Entity(lampStaticModel, new Vector3f(-25, terrain2.getTerrainHeight(0, -40), -40),0,0,0,0.5f));
+		lights.add(new Light(new Vector3f(-25, 20+terrain2.getTerrainHeight(0, -40), -40), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));
 		
 		MasterRender render = new MasterRender();
 		while(!Display.isCloseRequested()) {
@@ -124,7 +141,7 @@ public class Game {
 			for(Entity entity:entities){
 				render.processEntity(entity);
 			}
-			render.render(light, camera);
+			render.render(lights, camera);
 			DisplayManager.updateDisplay();
 			updateFPS();
 		}
@@ -143,7 +160,7 @@ public class Game {
 		try {
 			game.initialize();
 		} catch (SlickException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		

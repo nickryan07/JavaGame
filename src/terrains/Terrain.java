@@ -8,7 +8,6 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import org.newdawn.slick.Image;
 
 import engine.ModelLoader;
 import models.RawModel;
