@@ -29,7 +29,7 @@ public class DisplayManager {
 		
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
-			Display.create(new PixelFormat(), attribs);
+			Display.create(new PixelFormat().withSamples(8), attribs);
 			//Display.setTitle("Java Game");
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block

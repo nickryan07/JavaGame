@@ -6,7 +6,10 @@ import java.util.Random;
 
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 
@@ -15,6 +18,7 @@ import engine.MasterRender;
 import engine.ModelData;
 import engine.ModelLoader;
 import engine.ObjLoader;
+import engine.RenderWater;
 import entity.Camera;
 import entity.Entity;
 import entity.Light;
@@ -25,6 +29,9 @@ import terrains.Terrain;
 import textures.BlendedTerrainTexture;
 import textures.ModelTexture;
 import textures.TerrainTexture;
+import water.WaterFrameBuffer;
+import water.WaterShader;
+import water.WaterTile;
 
 public class Game {
 	
@@ -65,27 +72,26 @@ public class Game {
     	
     	Music openingMenuMusic;
 		openingMenuMusic = new Music("res/music.ogg");
-        openingMenuMusic.loop();
+        //openingMenuMusic.loop();
         openingMenuMusic.setVolume(0.08f);
-        Music natureSounds;
-    	natureSounds = new Music("res/nature.wav");
-    	natureSounds.loop();
-    	natureSounds.setVolume(0.005f);
+//        Music natureSounds;
+//    	natureSounds = new Music("res/nature.wav");
+//    	natureSounds.loop();
+//    	natureSounds.setVolume(0.005f);
 		
 		ModelLoader loader = new ModelLoader();
 		
 		
 		
-		ModelData charData = ObjLoader.loadObjModel("char2");
+		ModelData charData = ObjLoader.loadObjModel("char2decent");
 		RawModel model = loader.loadInVAO(charData.getVertices(), charData.getTextureCoords(),
 				charData.getNormals(), charData.getIndices());//Stall
 		ModelTexture texture = new ModelTexture(loader.loadTexture("Text"));//StallTexture
 		TexturedModel texturedModel = new TexturedModel(model, texture);
-		//ModelTexture tex = texturedModel.getTexture();
 		texture.setShineDamper(20);
 		texture.setReflectivity(0.1f);
 		
-		Player player = new Player(texturedModel, new Vector3f(0, 0, -30), 0, 180, 0, 0.015f);
+		Player player = new Player(texturedModel, new Vector3f(-5, 0, -30), 0, 180, 0, 0.015f);
 		//Entity stall = new Entity(texturedModel, new Vector3f(0, 0, -30), 0, 0, 0, 0.015f);
 		
 		
@@ -93,9 +99,7 @@ public class Game {
 		entities.add(player);
 		
 		List<Light> lights = new ArrayList<Light>();
-		lights.add(new Light(new Vector3f(10000, 10000, 1000), new Vector3f(0.4f,0.4f,0.4f)));
-		//lights.add(new Light(new Vector3f(-200, 40, -200), new Vector3f(100,0,0)));
-		//lights.add(new Light(new Vector3f(-100, 10, -100), new Vector3f(0,0,100)));
+		lights.add(new Light(new Vector3f(10000, 10000, 1000), new Vector3f(0.9f,0.9f,0.9f)));
 		
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("mud"));
@@ -113,14 +117,25 @@ public class Game {
 		ModelData grassData = ObjLoader.loadObjModel("grassModel");
 		RawModel grassModel = loader.loadInVAO(grassData.getVertices(), grassData.getTextureCoords(),
 				grassData.getNormals(), grassData.getIndices());//grassModel
+		ModelData treeData = ObjLoader.loadObjModel("tree");
+		RawModel treeModel = loader.loadInVAO(treeData.getVertices(), treeData.getTextureCoords(),
+				treeData.getNormals(), treeData.getIndices());//grassModel
 		
 		TexturedModel grassStaticModel = new TexturedModel(grassModel,new ModelTexture(loader.loadTexture("grass2")));
 		grassStaticModel.getTexture().setHasAlpha(true);
 		grassStaticModel.getTexture().setFixLighting(true);Random random = new Random();
+		TexturedModel treeStaticModel = new TexturedModel(treeModel,new ModelTexture(loader.loadTexture("tree")));
+		treeStaticModel.getTexture().setHasAlpha(true);
+		treeStaticModel.getTexture().setFixLighting(true);
 		for(int i = 0; i < 500; i++) {
 			float x = random.nextFloat()*800 - 400;
 			float z = random.nextFloat() * -600;
-			entities.add(new Entity(grassStaticModel, new Vector3f(x, terrain2.getTerrainHeight(x, z), z),0,0,0,1));
+			if(i % 2 == 0)
+				entities.add(new Entity(grassStaticModel, new Vector3f(x, terrain2.getTerrainHeight(x, z), z),0,0,0,1));
+			else
+				entities.add(new Entity(treeStaticModel, new Vector3f(x, terrain2.getTerrainHeight(x, z), z),0,0,0,3));
+			
+				
 		}
 		ModelData lampData = ObjLoader.loadObjModel("lamp");
 		RawModel lampModel = loader.loadInVAO(lampData.getVertices(), lampData.getTextureCoords(),
@@ -129,19 +144,41 @@ public class Game {
 		TexturedModel lampStaticModel = new TexturedModel(lampModel,new ModelTexture(loader.loadTexture("lamp")));
 		lampStaticModel.getTexture().setHasAlpha(true);
 		lampStaticModel.getTexture().setFixLighting(true);
-		entities.add(new Entity(lampStaticModel, new Vector3f(-25, terrain2.getTerrainHeight(0, -40), -40),0,0,0,0.5f));
-		lights.add(new Light(new Vector3f(-25, 20+terrain2.getTerrainHeight(0, -40), -40), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));
+		entities.add(new Entity(lampStaticModel, new Vector3f(-25, terrain2.getTerrainHeight(-25, -40), -40),0,0,0,0.5f));
+		lights.add(new Light(new Vector3f(-25, 20+terrain2.getTerrainHeight(-25, -40), -40), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));
 		
 		MasterRender render = new MasterRender();
+
+		
+		WaterFrameBuffer fbos = new WaterFrameBuffer();
+		WaterShader waterShader = new WaterShader();
+		RenderWater water = new RenderWater(loader, waterShader, render.getProjectionMatrix(), fbos);
+		List<WaterTile> waters = new ArrayList<WaterTile>();
+		WaterTile waterTile = new WaterTile(-125, -75, 0);
+		waters.add(waterTile);
+		
+		final Vector4f reflectionClipPlane = new Vector4f(0, 1, 0, -waterTile.getHeight());
+		final Vector4f refractionClipPlane = new Vector4f(0, -1, 0, waterTile.getHeight());
+		final Vector4f finalClipPlane = new Vector4f(0, 1, 0, 10000);
 		while(!Display.isCloseRequested()) {
 			camera.move();
 			player.move(camera, terrain2);
-			render.processTerrain(terrain);
-			render.processTerrain(terrain2);
-			for(Entity entity:entities){
-				render.processEntity(entity);
-			}
-			render.render(lights, camera);
+			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+			fbos.bindReflectionFrameBuffer();
+			float originalYPosition = camera.getPosition().y;
+			float distance = 2 *(camera.getPosition().y - waterTile.getHeight());
+			camera.getPosition().y -= distance;
+			camera.invertPitch();
+			render.updateScene(entities, terrains, lights, camera, reflectionClipPlane);
+			camera.getPosition().y = originalYPosition;
+			camera.invertPitch();
+			
+			fbos.bindRefractionFrameBuffer();
+			render.updateScene(entities, terrains, lights, camera, refractionClipPlane);
+			
+			fbos.unbindCurrentFrameBuffer();
+			render.updateScene(entities, terrains, lights, camera, finalClipPlane);
+			water.render(waters, camera);
 			DisplayManager.updateDisplay();
 			updateFPS();
 		}

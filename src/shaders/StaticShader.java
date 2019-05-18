@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import entity.Camera;
 import entity.Light;
@@ -27,6 +28,7 @@ public class StaticShader extends Shader {
 	private int locationReflectivity;
 	private int locationFixLighting;
 	private int locationSkyColor;
+	private int locationPlane;
 
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -48,7 +50,6 @@ public class StaticShader extends Shader {
 		locationReflectivity = super.getUniformLocation("reflectivity");
 		locationFixLighting = super.getUniformLocation("fixLighting");
 		locationSkyColor = super.getUniformLocation("skyColor");
-		
 		locationLightPosition = new int[MAX_LIGHT_SOURCES];
 		locationLightColor = new int[MAX_LIGHT_SOURCES];
 		locationAttenuation = new int[MAX_LIGHT_SOURCES];
@@ -57,6 +58,11 @@ public class StaticShader extends Shader {
 			locationLightColor[i] = super.getUniformLocation("lightColor["+i+"]");
 			locationAttenuation[i] = super.getUniformLocation("attenuation["+i+"]");;
 		}
+		locationPlane = super.getUniformLocation("plane");
+	}
+	
+	public void loadPlane(Vector4f plane) {
+		super.loadVector4f(locationPlane, plane);
 	}
 	
 	public void loadSkyColor(float red, float green, float blue) {

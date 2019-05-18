@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import entity.Camera;
 import entity.Light;
@@ -31,6 +32,7 @@ public class TerrainShader extends Shader {
 	private int locationgTexture;
 	private int locationbTexture;
 	private int locationBlendMap;
+	private int locationPlane;
 
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -64,6 +66,11 @@ public class TerrainShader extends Shader {
 			locationLightColor[i] = super.getUniformLocation("lightColor["+i+"]");
 			locationAttenuation[i] = super.getUniformLocation("attenuation["+i+"]");
 		}
+		locationPlane = super.getUniformLocation("plane");
+	}
+	
+	public void loadPlane(Vector4f plane) {
+		super.loadVector4f(locationPlane, plane);
 	}
 	
 	public void loadTextureUnits() {

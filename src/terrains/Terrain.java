@@ -1,11 +1,5 @@
 package terrains;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -19,8 +13,8 @@ public class Terrain {
 
 	private static final float SIZE = 800;
 	//private static final int VERTEX_COUNT = 128;
-	private static final float MAX_HEIGHT = 30;
-	private static final float MAX_COLOR = (float) Math.pow(256, 3);
+//	private static final float MAX_HEIGHT = 30;
+//	private static final float MAX_COLOR = (float) Math.pow(256, 3);
 	
 	private float x;
 	private float z;
@@ -43,15 +37,18 @@ public class Terrain {
 	
 	private RawModel generateTerrain(ModelLoader loader, String heightMap){
 		
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File("res/" + heightMap + ".png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		HeightGenerator heightGen = new HeightGenerator();
 		
-		int VERTEX_COUNT = img.getHeight();
+//		BufferedImage img = null;
+//		try {
+//			img = ImageIO.read(new File("res/" + heightMap + ".png"));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		int VERTEX_COUNT = 128;//img.getHeight();
+		
 		heights = new float[VERTEX_COUNT][VERTEX_COUNT];
 		int count = VERTEX_COUNT * VERTEX_COUNT;
 		float[] vertices = new float[count * 3];
@@ -62,11 +59,11 @@ public class Terrain {
 		for(int i=0;i<VERTEX_COUNT;i++){
 			for(int j=0;j<VERTEX_COUNT;j++){
 				vertices[vertexPointer*3] = (float)j/((float)VERTEX_COUNT - 1) * SIZE;
-				float height = getHeight(j, i, img);
+				float height = getHeight(j, i, heightGen);
 				heights[j][i] = height;
 				vertices[vertexPointer*3+1] = height;
 				vertices[vertexPointer*3+2] = (float)i/((float)VERTEX_COUNT - 1) * SIZE;
-				Vector3f norm = normalize(j, i, img);
+				Vector3f norm = normalize(j, i, heightGen);
 				normals[vertexPointer*3] = norm.x;
 				normals[vertexPointer*3+1] = norm.y;
 				normals[vertexPointer*3+2] = norm.z;
@@ -142,26 +139,40 @@ public class Terrain {
 	public TerrainTexture getBlendMap() {
 		return blendMap;
 	}
+//	
+//	private Vector3f normalize(int x, int z, BufferedImage img) {
+//		float heightL = getHeight(x - 1, z, img);
+//		float heightR = getHeight(x + 1, z, img);
+//		float heightD = getHeight(x, z - 1, img);
+//		float heightU = getHeight(x, z + 1, img);
+//		Vector3f norm = new Vector3f(heightL-heightR, 2f, heightD-heightU);
+//		norm.normalise();
+//		return norm;
+//	}
 	
-	private Vector3f normalize(int x, int z, BufferedImage img) {
-		float heightL = getHeight(x - 1, z, img);
-		float heightR = getHeight(x + 1, z, img);
-		float heightD = getHeight(x, z - 1, img);
-		float heightU = getHeight(x, z + 1, img);
+	private Vector3f normalize(int x, int z, HeightGenerator heightGen) {
+		float heightL = getHeight(x - 1, z, heightGen);
+		float heightR = getHeight(x + 1, z, heightGen);
+		float heightD = getHeight(x, z - 1, heightGen);
+		float heightU = getHeight(x, z + 1, heightGen);
 		Vector3f norm = new Vector3f(heightL-heightR, 2f, heightD-heightU);
 		norm.normalise();
 		return norm;
 	}
+//	
+//	private float getHeight(int x, int z, BufferedImage img) {
+//		if( x < 0 || x >= img.getHeight() || z < 0 || z >= img.getHeight()) {
+//			return 0;
+//		}
+//		float height = img.getRGB(x, z);
+//		height += MAX_COLOR/2f;
+//		height /= MAX_COLOR/2f;
+//		height *= MAX_HEIGHT;
+//		return height;
+//	}
 	
-	private float getHeight(int x, int z, BufferedImage img) {
-		if( x < 0 || x >= img.getHeight() || z < 0 || z >= img.getHeight()) {
-			return 0;
-		}
-		float height = img.getRGB(x, z);
-		height += MAX_COLOR/2f;
-		height /= MAX_COLOR/2f;
-		height *= MAX_HEIGHT;
-		return height;
+	private float getHeight(int x, int z, HeightGenerator heightGen) {
+		return heightGen.generateHeight(x, z);
 	}
 
 }
