@@ -13,7 +13,7 @@ public class HeightGenerator {
 	private int seed;
 	//(int) (System.currentTimeMillis() / 1000L)
 	public HeightGenerator() {
-		this.seed = random.nextInt(1000000000);
+		this.seed = 1000000000;//random.nextInt(1000000000);
 	}
 	
 	public float generateHeight(int x, int z) {

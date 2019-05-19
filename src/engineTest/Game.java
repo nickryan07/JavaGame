@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
-import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 
 import engine.DisplayManager;
@@ -70,10 +69,10 @@ public class Game {
     	DisplayManager.createDisplay();
 
     	
-    	Music openingMenuMusic;
-		openingMenuMusic = new Music("res/music.ogg");
+    	//Music openingMenuMusic;
+		//openingMenuMusic = new Music("res/music.ogg");
         //openingMenuMusic.loop();
-        openingMenuMusic.setVolume(0.08f);
+        //openingMenuMusic.setVolume(0.08f);
 //        Music natureSounds;
 //    	natureSounds = new Music("res/nature.wav");
 //    	natureSounds.loop();
@@ -99,7 +98,8 @@ public class Game {
 		entities.add(player);
 		
 		List<Light> lights = new ArrayList<Light>();
-		lights.add(new Light(new Vector3f(10000, 10000, 1000), new Vector3f(0.9f,0.9f,0.9f)));
+		Light sun = new Light(new Vector3f(10000, 10000, 1000), new Vector3f(0.9f,0.9f,0.9f));
+		lights.add(sun);
 		
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grass"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("mud"));
@@ -158,7 +158,7 @@ public class Game {
 		waters.add(waterTile);
 		
 		final Vector4f reflectionClipPlane = new Vector4f(0, 1, 0, -waterTile.getHeight());
-		final Vector4f refractionClipPlane = new Vector4f(0, -1, 0, waterTile.getHeight());
+		final Vector4f refractionClipPlane = new Vector4f(0, -1, 0, waterTile.getHeight()+0.25f);
 		final Vector4f finalClipPlane = new Vector4f(0, 1, 0, 10000);
 		while(!Display.isCloseRequested()) {
 			camera.move();
@@ -178,12 +178,12 @@ public class Game {
 			
 			fbos.unbindCurrentFrameBuffer();
 			render.updateScene(entities, terrains, lights, camera, finalClipPlane);
-			water.render(waters, camera);
+			water.render(waters, camera, sun);
 			DisplayManager.updateDisplay();
 			updateFPS();
 		}
 
-		openingMenuMusic.stop();
+		//openingMenuMusic.stop();
 		render.unload();
 		loader.unload();
 		DisplayManager.closeDisplay();

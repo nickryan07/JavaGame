@@ -3,6 +3,8 @@ package shaders;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -11,6 +13,8 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+
+import utils.Constants;
 
 public abstract class Shader {
 
@@ -93,7 +97,13 @@ public abstract class Shader {
 	private static int loadShader(String file, int type) {
 		StringBuilder shaderPath = new StringBuilder();
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+			BufferedReader reader;
+			if(!Constants.EXPORTED) {
+				reader = new BufferedReader(new FileReader(file));
+			} else {
+				InputStream in = Class.class.getResourceAsStream(file);
+				reader = new BufferedReader(new InputStreamReader(in));
+			}
 			String line;
 			while((line = reader.readLine()) != null) {
 				shaderPath.append(line).append("\n");
