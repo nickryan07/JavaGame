@@ -9,6 +9,12 @@ public class RawModel {
 		this.vaoId = vaoId;
 		this.vertexCount = vertexCount;
 	}
+	
+//	public RawModel(int vaoId, int vertexCount, int indexCount) {
+//		this.vaoId = vaoId;
+//		this.vertexCount = vertexCount;
+//		this.indexCount = indexCount;
+//	}
 
 	public int getVaoId() {
 		return vaoId;

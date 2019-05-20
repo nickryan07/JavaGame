@@ -10,10 +10,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
-import entity.Camera;
-import entity.Entity;
-import entity.Light;
+import entities.Camera;
+import entities.Entity;
+import entities.Light;
 import models.TexturedModel;
+import models.animated.AnimatedModel;
+import shaders.AnimatedModelShader;
 import shaders.StaticShader;
 import shaders.TerrainShader;
 import terrains.Terrain;
@@ -33,16 +35,23 @@ public class MasterRender {
 	
 	private RenderTerrain renderTerrain;
 	private TerrainShader terrainShader = new TerrainShader();
+
+	private RenderAnimatedEntity animatedRenderer;
+	private AnimatedModelShader animatedShader = new AnimatedModelShader();
+	
+	AnimatedModel am;
 	
 	
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	
-	public MasterRender() {
+	public MasterRender(AnimatedModel am) {
 		enableCulling();
 		createProjectionMatrix();
 		render = new RenderEntity(shader, projectionMatrix);
 		renderTerrain = new RenderTerrain(terrainShader, projectionMatrix);
+		animatedRenderer = new RenderAnimatedEntity(animatedShader, projectionMatrix);
+		this.am = am;
 	}
 	
 	public void updateScene(List<Entity> entitiesList, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clippingPlane) {
@@ -71,6 +80,11 @@ public class MasterRender {
 		terrainShader.loadViewMatrix(camera);
 		renderTerrain.render(terrains);
 		terrainShader.stop();
+		animatedShader.start();
+		//animatedShader.loadJointTransforms(am.getJointTransforms());
+		//animatedShader.loadLightDir(lights.get(0).getPosition());
+		animatedRenderer.render(am, camera, lights.get(0).getPosition());
+		animatedShader.stop();
 		entities.clear();
 		terrains.clear();
 	}
@@ -110,6 +124,7 @@ public class MasterRender {
 	public void unload() {
 		shader.unload();
 		terrainShader.unload();
+		animatedShader.unload();
 	}
 	
 	private void createProjectionMatrix() {

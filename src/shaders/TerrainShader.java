@@ -6,8 +6,8 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import entity.Camera;
-import entity.Light;
+import entities.Camera;
+import entities.Light;
 import utils.Constants;
 import utils.MathUtils;
 

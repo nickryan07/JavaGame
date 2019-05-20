@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
-import entity.Entity;
+import entities.Entity;
 import models.RawModel;
 import models.TexturedModel;
 import shaders.StaticShader;
@@ -40,7 +40,7 @@ public class RenderEntity {
 		}
 	}
 	
-	private void loadTexturedModel( TexturedModel texturedModel) {
+	private void loadTexturedModel(TexturedModel texturedModel) {
 		RawModel model = texturedModel.getRawModel();
 		GL30.glBindVertexArray(model.getVaoId());
 		GL20.glEnableVertexAttribArray(0);

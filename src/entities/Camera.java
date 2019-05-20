@@ -1,4 +1,4 @@
-package entity;
+package entities;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -38,7 +38,7 @@ public class Camera {
 	public void setThirdPersonPosition(float hDist, float vDist) {
 		float theta = player.getrY() + angle;
 		position.x = player.getPosition().x - (float) (hDist * Math.sin(Math.toRadians(theta)));
-		position.y = player.getPosition().y + vDist;
+		position.y = player.getPosition().y + 3f + vDist;
 		position.z = player.getPosition().z - (float) (hDist * Math.cos(Math.toRadians(theta)));
 	}
 	

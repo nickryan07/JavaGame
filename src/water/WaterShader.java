@@ -2,8 +2,8 @@ package water;
 
 import org.lwjgl.util.vector.Matrix4f;
 
-import entity.Camera;
-import entity.Light;
+import entities.Camera;
+import entities.Light;
 import shaders.Shader;
 import utils.Constants;
 import utils.MathUtils;

@@ -12,18 +12,22 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.SlickException;
 
+import animation.Animation;
+import engine.AnimatedModelLoader;
+import engine.AnimationLoader;
 import engine.DisplayManager;
 import engine.MasterRender;
 import engine.ModelData;
 import engine.ModelLoader;
 import engine.ObjLoader;
 import engine.RenderWater;
-import entity.Camera;
-import entity.Entity;
-import entity.Light;
-import entity.Player;
+import entities.Camera;
+import entities.Entity;
+import entities.Light;
+import entities.Player;
 import models.RawModel;
 import models.TexturedModel;
+import models.animated.AnimatedModel;
 import terrains.Terrain;
 import textures.BlendedTerrainTexture;
 import textures.ModelTexture;
@@ -147,7 +151,16 @@ public class Game {
 		entities.add(new Entity(lampStaticModel, new Vector3f(-25, terrain2.getTerrainHeight(-25, -40), -40),0,0,0,0.5f));
 		lights.add(new Light(new Vector3f(-25, 20+terrain2.getTerrainHeight(-25, -40), -40), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));
 		
-		MasterRender render = new MasterRender();
+		
+		// Animation testing
+		final String MODEL_FILE = "res/" + "model.dae";
+		final String ANIM_FILE =  "res/" + "model.dae";
+		final String DIFFUSE_FILE =  "res/" + "diffuse.png";
+		AnimatedModelLoader animModel = new AnimatedModelLoader();
+		AnimatedModel entity = animModel.loadEntity(MODEL_FILE, DIFFUSE_FILE);
+		Animation animation = AnimationLoader.loadAnimation(ANIM_FILE);
+				entity.doAnimation(animation);
+		MasterRender render = new MasterRender(entity);
 
 		
 		WaterFrameBuffer fbos = new WaterFrameBuffer();
@@ -160,9 +173,13 @@ public class Game {
 		final Vector4f reflectionClipPlane = new Vector4f(0, 1, 0, -waterTile.getHeight());
 		final Vector4f refractionClipPlane = new Vector4f(0, -1, 0, waterTile.getHeight()+0.25f);
 		final Vector4f finalClipPlane = new Vector4f(0, 1, 0, 10000);
+		
+		
+		
 		while(!Display.isCloseRequested()) {
 			camera.move();
 			player.move(camera, terrain2);
+			entity.update();
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 			fbos.bindReflectionFrameBuffer();
 			float originalYPosition = camera.getPosition().y;
