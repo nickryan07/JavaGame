@@ -2,16 +2,16 @@ package entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import models.TexturedModel;
+import models.animated.AnimatedModel;
 
-public class StaticEntity {
-
-	private TexturedModel model;
+public class AnimatedEntity {
+	
+	private AnimatedModel model;
 	private Vector3f position;
 	private float rX, rY, rZ;
 	private float scale;
 	
-	public StaticEntity(TexturedModel model, Vector3f position, float rX, float rY, float rZ, float scale) {
+	public AnimatedEntity(AnimatedModel model, Vector3f position, float rX, float rY, float rZ, float scale) {
 		this.model = model;
 		this.position = position;
 		this.rX = rX;
@@ -33,11 +33,11 @@ public class StaticEntity {
 		this.position.z += dz;
 	}
 
-	public TexturedModel getModel() {
+	public AnimatedModel getModel() {
 		return model;
 	}
 
-	public void setModel(TexturedModel model) {
+	public void setModel(AnimatedModel model) {
 		this.model = model;
 	}
 

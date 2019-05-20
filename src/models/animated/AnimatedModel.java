@@ -43,6 +43,14 @@ public class AnimatedModel {
 	public void doAnimation(Animation animation) {
 		animator.doAnimation(animation);
 	}
+	
+	public boolean isAnimating() {
+		return animator.isAnimating();
+	}
+	
+	public void reset() {
+		animator.reset();
+	}
 
 	public void update() {
 		animator.update();

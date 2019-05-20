@@ -3,7 +3,9 @@ package shaders;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import entities.Camera;
 import utils.Constants;
+import utils.MathUtils;
 
 public class AnimatedModelShader extends Shader {
 	
@@ -17,6 +19,8 @@ public class AnimatedModelShader extends Shader {
 	private int locationLightDirection;
 	private int locationJointTransforms[];
 	private int locationDiffuseMap;
+	private int locationTransformationMatrix;
+	private int locationViewMatrix;
 
 	
 	public AnimatedModelShader() {
@@ -36,6 +40,8 @@ public class AnimatedModelShader extends Shader {
 			locationJointTransforms[i] = super.getUniformLocation("jointTransforms["+i+"]");
 		}
 		locationDiffuseMap = super.getUniformLocation("diffuseMap");
+		locationTransformationMatrix = super.getUniformLocation("transformationMatrix");
+		locationViewMatrix = super.getUniformLocation("viewMatrix");
 	}
 
 	@Override
@@ -47,8 +53,17 @@ public class AnimatedModelShader extends Shader {
 		super.bindAttribute(4, "in_weights");
 	}
 	
+	public void loadTransformationMatrix(Matrix4f matrix) {
+		super.loadMatrix(locationTransformationMatrix, matrix);
+	}
+	
 	public void loadProjectionMatrix(Matrix4f matrix) {
 		super.loadMatrix(locationProjectionViewMatrix, matrix);
+	}
+	
+	public void loadViewMatrix(Camera camera) {
+		Matrix4f viewMatrix = MathUtils.createViewMatrix(camera);
+		super.loadMatrix(locationViewMatrix, viewMatrix);
 	}
 	
 	public void loadLightDir(Vector3f lightDir) {

@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
-import entities.Entity;
+import entities.StaticEntity;
 import models.RawModel;
 import models.TexturedModel;
 import shaders.StaticShader;
@@ -28,11 +28,11 @@ public class RenderEntity {
 		shader.stop();
 	}
 	
-	public void render(Map<TexturedModel, List<Entity>> entities) {
+	public void render(Map<TexturedModel, List<StaticEntity>> entities) {
 		for(TexturedModel model:entities.keySet()) {
 			loadTexturedModel(model);
-			List<Entity> batch = entities.get(model);
-			for(Entity entity:batch) {
+			List<StaticEntity> batch = entities.get(model);
+			for(StaticEntity entity:batch) {
 				loadInstance(entity);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
@@ -64,7 +64,7 @@ public class RenderEntity {
 		GL30.glBindVertexArray(0);
 	}
 	
-	private void loadInstance(Entity entity) {
+	private void loadInstance(StaticEntity entity) {
 		Matrix4f transformationMatrix = MathUtils.createTransformationMatrix(entity.getPosition(),
 				entity.getrX(), entity.getrY(), entity.getrZ(), entity.getScale());
 		shader.loadTransformationMatrix(transformationMatrix);

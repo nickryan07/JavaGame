@@ -15,6 +15,7 @@ public class Animator {
 
 	private Animation currentAnimation;
 	private float animationTime = 0;
+	private float speed = 1.5f;
 
 	public Animator(AnimatedModel entity) {
 		this.entity = entity;
@@ -23,6 +24,15 @@ public class Animator {
 	public void doAnimation(Animation animation) {
 		this.animationTime = 0;
 		this.currentAnimation = animation;
+	}
+	
+	public boolean isAnimating() {
+		return !(currentAnimation == null);
+	}
+	
+	public void reset() {
+		this.animationTime = 0;
+		this.currentAnimation = null;
 	}
 
 	public void update() {
@@ -35,7 +45,7 @@ public class Animator {
 	}
 
 	private void increaseAnimationTime() {
-		animationTime += DisplayManager.getFrameTimeSeconds();
+		animationTime += DisplayManager.getFrameTimeSeconds() * speed;
 		if (animationTime > currentAnimation.getLength()) {
 			this.animationTime %= currentAnimation.getLength();
 		}

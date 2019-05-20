@@ -3,12 +3,13 @@ package entities;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
+import animation.Animation;
 import engine.DisplayManager;
-import models.TexturedModel;
+import models.animated.AnimatedModel;
 import terrains.Terrain;
 import utils.Constants;
 
-public class Player extends Entity {
+public class Player extends AnimatedEntity {
 	
 	private static final float RUN = 10;
 	private static final float TURN = 160;
@@ -18,11 +19,18 @@ public class Player extends Entity {
 	private float currentSpeed = 0;
 	private float currentTurn = 0;
 	private float currentJump = 0;
+	
+	Animation moveAnimation;
 
-	public Player(TexturedModel model, Vector3f position, float rX, float rY, float rZ, float scale) {
+	public Player(AnimatedModel model, Animation anim, Vector3f position, float rX, float rY, float rZ, float scale) {
 		super(model, position, rX, rY, rZ, scale);
-		
+		moveAnimation = anim;
 	}
+	
+//	public Player(AnimatedModel model, Vector3f position, float rX, float rY, float rZ, float scale) {
+//		super(model, position, rX, rY, rZ, scale);
+//		
+//	}
 	
 	public void move(Camera camera, /*ArrayList<Terrain> terrains*/ Terrain terrain) {
 		checkInputs();
@@ -51,18 +59,31 @@ public class Player extends Entity {
 	private void checkInputs() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+				if(!super.getModel().isAnimating()) {
+					super.getModel().doAnimation(moveAnimation);
+				}
 				this.currentSpeed = RUN*2;
 			} else {
+				if(!super.getModel().isAnimating()) {
+					super.getModel().doAnimation(moveAnimation);
+				} 
 				this.currentSpeed = RUN;
 			}
 		} else if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+				if(!super.getModel().isAnimating()) {
+					super.getModel().doAnimation(moveAnimation);
+				}
 				this.currentSpeed = -RUN*2;
 			} else {
+				if(!super.getModel().isAnimating()) {
+					super.getModel().doAnimation(moveAnimation);
+				}
 				this.currentSpeed =- RUN;
 			}
 		} else {
 			this.currentSpeed = 0;
+			super.getModel().reset();
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {

@@ -10,11 +10,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
+import entities.AnimatedEntity;
 import entities.Camera;
-import entities.Entity;
+import entities.StaticEntity;
 import entities.Light;
 import models.TexturedModel;
-import models.animated.AnimatedModel;
 import shaders.AnimatedModelShader;
 import shaders.StaticShader;
 import shaders.TerrainShader;
@@ -39,27 +39,29 @@ public class MasterRender {
 	private RenderAnimatedEntity animatedRenderer;
 	private AnimatedModelShader animatedShader = new AnimatedModelShader();
 	
-	AnimatedModel am;
 	
 	
-	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
+	private Map<TexturedModel, List<StaticEntity>> entities = new HashMap<TexturedModel, List<StaticEntity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
+	private List<AnimatedEntity> animEntities = new ArrayList<AnimatedEntity>();
 	
-	public MasterRender(AnimatedModel am) {
+	public MasterRender() {
 		enableCulling();
 		createProjectionMatrix();
 		render = new RenderEntity(shader, projectionMatrix);
 		renderTerrain = new RenderTerrain(terrainShader, projectionMatrix);
 		animatedRenderer = new RenderAnimatedEntity(animatedShader, projectionMatrix);
-		this.am = am;
 	}
 	
-	public void updateScene(List<Entity> entitiesList, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clippingPlane) {
+	public void updateScene(List<StaticEntity> entitiesList, List<AnimatedEntity> animatedEntities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clippingPlane) {
 		for(Terrain terr:terrains) {
 			processTerrain(terr);
 		}
-		for(Entity entity:entitiesList) {
+		for(StaticEntity entity:entitiesList) {
 			processEntity(entity);
+		}
+		for(AnimatedEntity anim:animatedEntities) {
+			processAnimatedEntity(anim);
 		}
 		render(lights, camera, clippingPlane);
 	}
@@ -81,12 +83,14 @@ public class MasterRender {
 		renderTerrain.render(terrains);
 		terrainShader.stop();
 		animatedShader.start();
+		animatedShader.loadViewMatrix(camera);
 		//animatedShader.loadJointTransforms(am.getJointTransforms());
 		//animatedShader.loadLightDir(lights.get(0).getPosition());
-		animatedRenderer.render(am, camera, lights.get(0).getPosition());
+		animatedRenderer.render(animEntities, camera, lights.get(0).getPosition());
 		animatedShader.stop();
 		entities.clear();
 		terrains.clear();
+		animEntities.clear();
 	}
 	
 	public void init() {
@@ -108,13 +112,17 @@ public class MasterRender {
 		terrains.add(terrain);
 	}
 	
-	public void processEntity(Entity entity) {
+	public void processAnimatedEntity(AnimatedEntity entity) {
+		animEntities.add(entity);
+	}
+	
+	public void processEntity(StaticEntity entity) {
 		TexturedModel entityModel = entity.getModel();
-		List<Entity> batch = entities.get(entityModel);
+		List<StaticEntity> batch = entities.get(entityModel);
 		if(batch != null) {
 			batch.add(entity);
 		} else {
-			List<Entity> newBatch = new ArrayList<Entity>();
+			List<StaticEntity> newBatch = new ArrayList<StaticEntity>();
 			newBatch.add(entity);
 			entities.put(entityModel, newBatch);
 		}
