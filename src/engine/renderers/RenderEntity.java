@@ -1,4 +1,4 @@
-package engine;
+package engine.renderers;
 
 import java.util.List;
 import java.util.Map;
@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
+import engine.MasterRender;
 import entities.StaticEntity;
 import models.RawModel;
 import models.TexturedModel;

@@ -1,4 +1,4 @@
-package engine;
+package engine.renderers;
 
 import java.util.List;
 
@@ -9,6 +9,8 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import engine.DisplayManager;
+import engine.ModelLoader;
 import entities.Camera;
 import entities.Light;
 import models.RawModel;

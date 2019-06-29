@@ -1,4 +1,4 @@
-package engine;
+package engine.renderers;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
+import engine.MasterRender;
 import entities.AnimatedEntity;
 import entities.Camera;
 import models.RawModel;

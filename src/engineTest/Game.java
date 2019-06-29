@@ -20,7 +20,7 @@ import engine.MasterRender;
 import engine.ModelData;
 import engine.ModelLoader;
 import engine.ObjLoader;
-import engine.RenderWater;
+import engine.renderers.RenderWater;
 import entities.AnimatedEntity;
 import entities.Camera;
 import entities.StaticEntity;
@@ -165,7 +165,7 @@ public class Game {
 		Player player = new Player(entity, animation, new Vector3f(-5, 0, -30), 0, 180, 0, 0.4f);//
 		animEntities.add(player);
 		Camera camera = new Camera(player);
-		MasterRender render = new MasterRender();
+		MasterRender render = new MasterRender(loader);
 
 		
 		WaterFrameBuffer fbos = new WaterFrameBuffer();
@@ -176,7 +176,7 @@ public class Game {
 		waters.add(waterTile);
 		
 		final Vector4f reflectionClipPlane = new Vector4f(0, 1, 0, -waterTile.getHeight());
-		final Vector4f refractionClipPlane = new Vector4f(0, -1, 0, waterTile.getHeight()+0.25f);
+		final Vector4f refractionClipPlane = new Vector4f(0, -1, 0, waterTile.getHeight()+0.3f);
 		final Vector4f finalClipPlane = new Vector4f(0, 1, 0, 10000);
 		
 		

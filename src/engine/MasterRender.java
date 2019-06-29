@@ -10,6 +10,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
+import engine.renderers.RenderAnimatedEntity;
+import engine.renderers.RenderEntity;
+import engine.renderers.RenderSkybox;
+import engine.renderers.RenderTerrain;
 import entities.AnimatedEntity;
 import entities.Camera;
 import entities.StaticEntity;
@@ -39,18 +43,21 @@ public class MasterRender {
 	private RenderAnimatedEntity animatedRenderer;
 	private AnimatedModelShader animatedShader = new AnimatedModelShader();
 	
+	private RenderSkybox renderSkybox;
+	
 	
 	
 	private Map<TexturedModel, List<StaticEntity>> entities = new HashMap<TexturedModel, List<StaticEntity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	private List<AnimatedEntity> animEntities = new ArrayList<AnimatedEntity>();
 	
-	public MasterRender() {
+	public MasterRender(ModelLoader loader) {
 		enableCulling();
 		createProjectionMatrix();
 		render = new RenderEntity(shader, projectionMatrix);
 		renderTerrain = new RenderTerrain(terrainShader, projectionMatrix);
 		animatedRenderer = new RenderAnimatedEntity(animatedShader, projectionMatrix);
+		renderSkybox = new RenderSkybox(loader, projectionMatrix);
 	}
 	
 	public void updateScene(List<StaticEntity> entitiesList, List<AnimatedEntity> animatedEntities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clippingPlane) {
@@ -88,6 +95,7 @@ public class MasterRender {
 		//animatedShader.loadLightDir(lights.get(0).getPosition());
 		animatedRenderer.render(animEntities, camera, lights.get(0).getPosition());
 		animatedShader.stop();
+		renderSkybox.render(camera);
 		entities.clear();
 		terrains.clear();
 		animEntities.clear();
